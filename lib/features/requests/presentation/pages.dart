@@ -60,6 +60,49 @@ class FailurePanel extends StatelessWidget {
   }
 }
 
+class RequestEditor extends StatefulWidget {
+  const RequestEditor({
+    super.key,
+    required this.requestId,
+    required this.title,
+  });
+
+  final String requestId;
+  final String title;
+
+  @override
+  State<RequestEditor> createState() => _RequestEditorState();
+}
+
+class _RequestEditorState extends State<RequestEditor> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(widget.title),
+      subtitle: TextField(
+        controller: _controller,
+        decoration: const InputDecoration(
+          labelText: 'Motivo',
+        ),
+      ),
+    );
+  }
+}
+
 class RequestsPage extends ConsumerWidget {
   const RequestsPage({super.key});
   @override
@@ -128,6 +171,7 @@ class RequestsPage extends ConsumerWidget {
               onChanged: ref.read(filterProvider.notifier).selectStatus,
             ),
           ),
+          
           Expanded(
             child: data.when(
               skipLoadingOnRefresh: false,

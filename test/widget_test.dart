@@ -66,4 +66,37 @@ void main() {
     expect(find.text('Acceso remoto'), findsOneWidget);
     expect(repository.calls, 1);
   });
+
+  testWidgets(
+  'el listado no desborda a 360 ni a 800 píxeles',
+  (tester) async {
+    final repository = MemoryRequestRepository();
+
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          repositoryProvider.overrideWithValue(repository),
+        ],
+        child: const PortalApp(),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('login-ana')));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+
+    tester.view.physicalSize = const Size(800, 900);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+  },
+);
 }
